@@ -1,15 +1,13 @@
 package com.example.SpringBootDemo.DTO;
 
-import javax.persistence.Entity;
 
-import com.example.SpringBootDemo.Entity.Customer;
+import java.util.Set;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
 @Getter
 @Setter
 @AllArgsConstructor
@@ -27,4 +25,6 @@ public class CustomerDTO {
 
     /** The Phone*/
     String phone;
+
+    private Set<String> addresses;
 }
