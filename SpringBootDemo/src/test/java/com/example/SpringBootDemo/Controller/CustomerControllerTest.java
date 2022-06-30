@@ -13,6 +13,7 @@ import com.example.SpringBootDemo.DTO.CustomerDTO;
 import com.example.SpringBootDemo.Entity.Customer;
 import com.example.SpringBootDemo.Service.CustomerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.is;
@@ -41,9 +42,6 @@ public class CustomerControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    /*
-     *  Unit test insert customer
-     */
     @Test
     public void testInserCustomer() throws Exception {
         Customer customer = Customer.builder()
@@ -68,9 +66,6 @@ public class CustomerControllerTest {
                         is(customer.getPhone())));
     }
 
-    /*
-     *  Unit test get all customer
-     */
     @Test
     public void testAllCustomer() throws Exception {
         List<Customer> listCustomer = new ArrayList<>();
@@ -78,11 +73,35 @@ public class CustomerControllerTest {
         listCustomer.add(Customer.builder().customerName("TonyStark").customerEmail("tony@gmail.com").phone("0909192").build());
         given(customerService.getAllCustomers()).willReturn(listCustomer);
 
+        // when -  action or the behaviour that we are going test
         ResultActions response = mockMvc.perform(get("/api/v1/customer"));
 
+        // then - verify the output
         response.andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.size()",
                         is(listCustomer.size())));
+    }
+
+    @Test
+    public void givenEmployeeId_whenGetEmployeeById_thenReturnEmployeeObject() throws Exception{
+        // given - precondition or setup
+        long employeeId = 1L;
+        Customer customer = Customer.builder()
+                .customerName("Ramesh")
+                .customerEmail("Fadatare")
+                .phone("ramesh@gmail.com")
+                .build();
+        given(customerService.findById(employeeId)).willReturn(customer);
+
+        // when -  action or the behaviour that we are going test
+        ResultActions response = mockMvc.perform(get("/api/v1/customer/{id}", employeeId));
+
+        // then - verify the output
+        response.andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.firstName", is(customer.getCustomerName())))
+                .andExpect(jsonPath("$.lastName", is(customer.getCustomerEmail())))
+                .andExpect(jsonPath("$.email", is(customer.getPhone())));
     }
 }

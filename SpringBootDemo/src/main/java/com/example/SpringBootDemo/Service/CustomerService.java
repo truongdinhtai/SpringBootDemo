@@ -12,8 +12,20 @@ import com.example.SpringBootDemo.Entity.Customer;
 public interface CustomerService {
 
     /** Get All Customer */
-    List<Customer> getCustomers();
+    List<Customer> getAllCustomers();
 
     /** Insert Customer */
     ResponseEntity<Object> insert(CustomerDTO customerDTO);
+
+    /** Find by id Customer */
+    public Customer findById(Long id);
+    public String insertCustomer(Customer customer);
+
+    /** Update Customer */
+    public String updateCustomer(CustomerDTO customer);
+
+    /** Delete Customer */
+    public String deleteCustomer(CustomerDTO customer);
+
+    public List<Customer> getCustomers();
 }
