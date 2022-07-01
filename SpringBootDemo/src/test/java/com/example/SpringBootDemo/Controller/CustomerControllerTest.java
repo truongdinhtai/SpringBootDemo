@@ -46,10 +46,10 @@ public class CustomerControllerTest {
     public void testInserCustomer() throws Exception {
         Customer customer = Customer.builder()
                 .customerName("qưe")
-                .customerEmail("zsd")
+                .email("zsd")
                 .phone("qưeeee")
                 .build();
-        given(customerService.insert((CustomerDTO) any(Customer.class)))
+        given(customerService.insertCustomer((CustomerDTO) any(Customer.class)))
                 .willAnswer((invocation) -> invocation.getArgument(0));
 
         ResultActions response = mockMvc.perform(post("/api/v1/customer/inserCustomer")
@@ -61,7 +61,7 @@ public class CustomerControllerTest {
                 .andExpect(jsonPath("$.customerName",
                         is(customer.getCustomerName())))
                 .andExpect(jsonPath("$.CustomerEmail",
-                        is(customer.getCustomerEmail())))
+                        is(customer.getEmail())))
                 .andExpect(jsonPath("$.phone",
                         is(customer.getPhone())));
     }
@@ -69,8 +69,8 @@ public class CustomerControllerTest {
     @Test
     public void testAllCustomer() throws Exception {
         List<Customer> listCustomer = new ArrayList<>();
-        listCustomer.add(Customer.builder().customerName("CaptainMarvel").customerEmail("cap@gmail.com").phone("0909192").build());
-        listCustomer.add(Customer.builder().customerName("TonyStark").customerEmail("tony@gmail.com").phone("0909192").build());
+        listCustomer.add(Customer.builder().customerName("CaptainMarvel").email("cap@gmail.com").phone("0909192").build());
+        listCustomer.add(Customer.builder().customerName("TonyStark").email("tony@gmail.com").phone("0909192").build());
         given(customerService.getAllCustomers()).willReturn(listCustomer);
 
         // when -  action or the behaviour that we are going test
@@ -87,11 +87,11 @@ public class CustomerControllerTest {
     public void givenEmployeeId_whenGetEmployeeById_thenReturnEmployeeObject() throws Exception{
         // given - precondition or setup
         long employeeId = 1L;
-        Customer customer = Customer.builder()
+        Optional<Customer> customer = Optional.ofNullable(Customer.builder()
                 .customerName("Ramesh")
-                .customerEmail("Fadatare")
+                .email("Fadatare")
                 .phone("ramesh@gmail.com")
-                .build();
+                .build());
         given(customerService.findById(employeeId)).willReturn(customer);
 
         // when -  action or the behaviour that we are going test
@@ -101,7 +101,7 @@ public class CustomerControllerTest {
         response.andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.firstName", is(customer.getCustomerName())))
-                .andExpect(jsonPath("$.lastName", is(customer.getCustomerEmail())))
+                .andExpect(jsonPath("$.lastName", is(customer.getEmail())))
                 .andExpect(jsonPath("$.email", is(customer.getPhone())));
     }
 }

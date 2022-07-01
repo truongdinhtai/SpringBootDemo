@@ -1,8 +1,8 @@
 package com.example.SpringBootDemo.Service;
 
 import java.util.List;
+import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.example.SpringBootDemo.DTO.CustomerDTO;
@@ -15,17 +15,17 @@ public interface CustomerService {
     List<Customer> getAllCustomers();
 
     /** Insert Customer */
-    ResponseEntity<Object> insert(CustomerDTO customerDTO);
+    public boolean insertCustomer(CustomerDTO customerDTO);
 
     /** Find by id Customer */
-    public Customer findById(Long id);
-    public String insertCustomer(Customer customer);
+    public Optional<Customer> findById(long id);
 
     /** Update Customer */
-    public String updateCustomer(CustomerDTO customer);
+    public boolean updateCustomer(long id, CustomerDTO customerDTO);
 
     /** Delete Customer */
-    public String deleteCustomer(CustomerDTO customer);
+    public boolean deleteCustomer(long id);
 
-    public List<Customer> getCustomers();
+    public Optional<Customer> findCustomerByEmail(String customerEmail);
+
 }

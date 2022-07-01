@@ -2,12 +2,10 @@ package com.example.SpringBootDemo.Service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.SpringBootDemo.DTO.CustomerDTO;
@@ -28,63 +26,57 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<Customer> getAllCustomers() {
         List<Customer> customers = new ArrayList<>();
-        customerRepository.getAllCustomers().forEach(customers::add);
+        customerRepository.getAllCustomer().forEach(customers::add);
         return customers;
     }
 
-    /**
+    /** 
      * Insert Customer
      * 
      * @param customerDTO the CustomerDTO
      * */
     @Override
-    public ResponseEntity<Object> insert(CustomerDTO customerDTO) {
-        try {
+    public boolean insertCustomer(CustomerDTO customerDTO) {
             Customer cus = new Customer();
             cus = (Customer) MergingObjects.mergeObject(customerDTO, Customer.class);
-            customerRepository.insertCustomerUsingQueryAnnotation(cus);
-            return new ResponseEntity<>(cus, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+            return customerRepository.insertCustomer(cus);
     }
 
-	public Customer findById(Long id) {
-		Customer customerResponse = customerRepository.findByIdd(id);
-		return customerResponse;
-	}
-	
-	public String insertCustomer(Customer customer) {
-		Long id = customer.getId();
-		String customerName = customer.getCustomerName();
-		String customerEmail = customer.getCustomerEmail();
-		String phone = customer.getPhone();
-		customerRepository.insertCustomerUsingQueryAnnotationn(id, customerName, customerEmail, phone);
-		return "Record inserted successfully using @Modifiying and @query Named Parameter";
-	}
+    /**
+     *Get Customer by Id
+     *
+     *@PathVariable id
+     */
+    @Override
+    public Optional<Customer> findById(long id) {
+        return customerRepository.findById(id);
+    }
 
-	public String updateCustomer(CustomerDTO customer) {
-		String mes = "sd";
-		try {
-			customerRepository.updateCustomerUsingQueryAnnotation(customer.getCustomerName(), customer.getId());
-            return mes;
-        } catch (Exception e) {
-        	return mes;
-        }
-	}
+    @Override
+    public Optional<Customer> findCustomerByEmail(String customerEmail) {
+        return customerRepository.findCustomerByEmail(customerEmail);
+    }
 
-	public String deleteCustomer(CustomerDTO customer) {
-		try {
-			customerRepository.deleteCustomerUsingQueryAnnotation(customer.getId());
-            return null;
-        } catch (Exception e) {
-            return null;
-        }
-	}
+    /**
+     *Update Customer
+     *
+     *@param customer the CustomerDTO
+     *@param id
+     */
+    @Override
+    public boolean updateCustomer(long id, CustomerDTO customerDTO) {
+        Customer cus = new Customer();
+        cus = (Customer) MergingObjects.mergeObject(customerDTO, Customer.class);
+        return customerRepository.updateCustomer(id, cus);
+    }
 
-	@Override
-	public List<Customer> getCustomers() {
-		// TODO Auto-generated method stub
-		return customerRepository.findAll();
-	}
+    /**
+     *Delete Customer by Id
+     *
+     *@param id 
+     */
+    @Override
+    public boolean deleteCustomer(long id) {
+        return customerRepository.deleteCustomer(id);
+    }
 }

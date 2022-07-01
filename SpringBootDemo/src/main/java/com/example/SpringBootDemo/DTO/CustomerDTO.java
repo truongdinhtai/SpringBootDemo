@@ -1,8 +1,5 @@
 package com.example.SpringBootDemo.DTO;
 
-
-import java.util.Set;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,10 +18,8 @@ public class CustomerDTO {
     private String customerName;
 
     /** The Customer Email */
-    private String customerEmail;
+    private String email;
 
     /** The Phone*/
     String phone;
-
-    private Set<String> addresses;
 }

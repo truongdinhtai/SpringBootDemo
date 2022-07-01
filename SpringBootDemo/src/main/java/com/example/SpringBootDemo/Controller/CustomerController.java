@@ -1,6 +1,7 @@
 package com.example.SpringBootDemo.Controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.SpringBootDemo.DTO.CustomerDTO;
 import com.example.SpringBootDemo.Entity.Customer;
 import com.example.SpringBootDemo.Service.CustomerService;
-import com.example.SpringBootDemo.Utils.AppUtils;
 import com.example.SpringBootDemo.Utils.JsonUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 
@@ -44,9 +44,7 @@ public class CustomerController {
             return new ResponseEntity<>(customers, HttpStatus.OK);
         } catch (Exception e) {
             logger.error("error");
-            e.printStackTrace();
-            logger.error("Exception -" + AppUtils.getLogSupport(e));
-            return new ResponseEntity<List<Customer>>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -57,9 +55,16 @@ public class CustomerController {
      */
     @PostMapping("/inserCustomer")
     public ResponseEntity<Object> saveCusotmer(@RequestBody String json) {
-        CustomerDTO customerDTO = new CustomerDTO();
-        customerDTO = (CustomerDTO) JsonUtils.convertToObject(json, new TypeReference<CustomerDTO>() {});
-        return new ResponseEntity<>(customerService.insert(customerDTO), HttpStatus.CREATED);
+        logger.info("In!!");
+        try {
+            logger.info("Insert customer!!");
+            CustomerDTO customerDTO = new CustomerDTO();
+            customerDTO = (CustomerDTO) JsonUtils.convertToObject(json, new TypeReference<CustomerDTO>() {});
+            return new ResponseEntity<Object>(customerService.insertCustomer(customerDTO), HttpStatus.CREATED);
+        } catch (Exception e) {
+            logger.error("error");
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -68,36 +73,23 @@ public class CustomerController {
      *@PathVariable id
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomer(@PathVariable Long id) {
-        logger.info("In!!");
-        try {
-            logger.info("Update customer!!");
-            Customer customer = customerService.findById(id);
-            return new ResponseEntity<>(customer, HttpStatus.OK);
-        } catch (Exception e) {
-            logger.error("error");
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public Optional<Customer> getCustomer(@PathVariable Long id) {
+        return customerService.findById(id);
     }
-
-	@PostMapping("/inser")
-	public String insertCustomer(@RequestBody Customer customer) {
-		String response = customerService.insertCustomer(customer);
-		return response;
-	}
 
     /**
      *Update Customer
      *
      *@param customer the CustomerDTO
+     *@param id
      */
-    @PutMapping("/update")
-    public ResponseEntity<String> updateCustomer(@RequestBody CustomerDTO customer) {
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Object> updateCustomer(@PathVariable long id,@RequestBody CustomerDTO customer) {
         logger.info("In!!");
         try {
             logger.info("Update customer!!");
-            String response = customerService.updateCustomer(customer);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            customerService.updateCustomer(id, customer);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             logger.error("error");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -107,23 +99,29 @@ public class CustomerController {
     /**
      *Delete Customer by Id
      *
-     *@param customer the CustomerDTO
+     *@param id
      */
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteCustomer(@RequestBody CustomerDTO customer) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteCustomer(@PathVariable long id) {
         logger.info("In!!");
         try {
-            logger.info("Update customer!!");
-            String response = customerService.deleteCustomer(customer);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            logger.info("Delete customer!!");
+            customerService.deleteCustomer(id);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             logger.error("error");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/Customers")
-    public List<Customer> getALlBooks() {
-        return customerService.getCustomers();
+    /*
+     * Get Customer by email
+     * 
+     * @PathVariable customerEmail
+     */
+    @GetMapping("/find/{customerEmail}")
+    public Optional<Customer> findCustomerByEmail(@PathVariable String customerEmail) {
+        return customerService.findCustomerByEmail(customerEmail);
+        
     }
 }

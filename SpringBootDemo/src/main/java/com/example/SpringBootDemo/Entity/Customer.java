@@ -1,17 +1,15 @@
 package com.example.SpringBootDemo.Entity;
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,29 +23,25 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="customer")
-public class Customer implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public class Customer {
 
     /** The Id */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long id;
+    private Long idCustomer;
 
     /** The Customer Name*/
-    @Column(name = "customer_Name")
     private String customerName;
 
     /** The Customer Email */
-    @Column(name = "customer_Email")
-    private String customerEmail;
+    private String email;
 
     /** The Phone*/
-    @Column(name = "phone")
     String phone;
 
-//    @OneToMany(mappedBy = "address",s fetch = FetchType.LAZY)
-//    private Set<Address> addresses = new HashSet<>();
+    @OneToMany(targetEntity = Address.class,
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_customer",referencedColumnName = "idCustomer")
+    private List<Address> address;
 }
